@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=gen
 #SBATCH --nodes=1
-#SBATCH -J tng-sam-multi-2
+#SBATCH -J tree_offsets
 #SBATCH --exclusive
 #SBATCH --time=48:00:00
 #SBATCH --mail-user=a.gabrielpillai@gmail.com
@@ -12,9 +12,8 @@
 module load gcc
 module load python3
 
-PARTITION=5
+SIM=L205n2500TNG
+NSUB=7
 BASE_PATH=/mnt/ceph/users/agabrielpillai/tng-sam
-SIM=L35n2160TNG
-SUBVOLS=6
 
-python3 $BASE_PATH/scripts/running/run_SAM_multi.py $PARTITION $SIM $BASE_PATH $SUBVOLS 
+python3 $BASE_PATH/scripts/postprocessing/tree-offsets.py $NSUB $SIM $BASE_PATH

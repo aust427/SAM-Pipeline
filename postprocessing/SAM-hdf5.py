@@ -9,6 +9,7 @@ x_k = int(sys.argv[3])
 n_sub = int(sys.argv[4])
 sim = sys.argv[5]
 input_path = sys.argv[6]
+snap_range = str(sys.argv[7])
 
 print('subvolume: %i_%i_%i' % (x_i, x_j, x_k))
 
@@ -34,11 +35,11 @@ h_header_rows = []
 for i in range(0, len(h_colnames)):
     h_header_rows.append(i)
 
-galprop = pd.read_csv(input_path + '/' + sim + '/isotrees/%i_%i_%i/' %(x_i, x_j, x_k) + 'galprop_0-99.dat', 
+galprop = pd.read_csv(input_path + '/' + sim + '/isotrees/%i_%i_%i/' %(x_i, x_j, x_k) + 'galprop_%s.dat' % snap_range, 
                       delimiter=' ', skiprows=g_header_rows, names=g_colnames)
 print('galprop read! shape:', galprop.shape)
 
-haloprop = pd.read_csv(input_path + '/' + sim + '/isotrees/%i_%i_%i/' %(x_i, x_j, x_k) + 'haloprop_0-99.dat',
+haloprop = pd.read_csv(input_path + '/' + sim + '/isotrees/%i_%i_%i/' %(x_i, x_j, x_k) + 'haloprop_%s.dat' % snap_range,
                        delimiter=' ', skiprows=h_header_rows, names=h_colnames)
 print('haloprop read! shape:', haloprop.shape)
 
@@ -101,7 +102,7 @@ subhaloZcold = subhalos.create_dataset("GalpropZcold", (galprop.shape[0], ),
                                           dtype='<f4', data = galprop['Metal_cold'].values)
 
 # Mass quantities 
-subhaloMhalo = subhalos.create_dataset("GalpropMhalo", (galprop.shape[0], ),
+subhaloMhalo = subhalos.create_dataset("GalpropMvir", (galprop.shape[0], ),
                                           dtype='<f4', data = galprop['mhalo'].values)
 subhaloMstar = subhalos.create_dataset("GalpropMstar", (galprop.shape[0], ),
                                           dtype='<f4', data = galprop['mstar'].values)
