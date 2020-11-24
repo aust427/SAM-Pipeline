@@ -6,7 +6,9 @@ import sys
 x_i = int(sys.argv[1])
 x_j = int(sys.argv[2])
 x_k = int(sys.argv[3])
+
 n_sub = int(sys.argv[4])
+
 sim = sys.argv[5]
 input_path = sys.argv[6]
 snap_range = str(sys.argv[7])
@@ -90,7 +92,7 @@ subhaloRfric = subhalos.create_dataset("GalpropRfric", (galprop.shape[0],),
 subhaloZstar = subhalos.create_dataset("GalpropZstar", (galprop.shape[0],),
                                        dtype='<f4', data=galprop['Metal_star'].values)
 subhaloZcold = subhalos.create_dataset("GalpropZcold", (galprop.shape[0],),
-                                       type='<f4', data=galprop['Metal_cold'].values)
+                                       dtype='<f4', data=galprop['Metal_cold'].values)
 
 # Mass quantities 
 subhaloMhalo = subhalos.create_dataset("GalpropMvir", (galprop.shape[0],),
@@ -231,5 +233,3 @@ groupMstarDiffuse = groups.create_dataset("HalopropMstar_diffuse", (haloprop.sha
                                           dtype='<f4', data=haloprop['mstar_diffuse'].values)
 
 group.close()
-
-print('hdf5 written!')

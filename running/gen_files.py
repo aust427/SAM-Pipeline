@@ -1,22 +1,20 @@
-# script to gen files.list and param.sample for each subvolume 
-sim_list = {'L35n2160TNG': 6, 'L75n1820TNG': 5, 'L205n2500TNG': 7}
+import sys
 
-sim = 'L35n2160TNG'
+SIM = str(sys.argv[1])
+partition = int(sys.argv[2])
+lib_path = '%s' % str(sys.argv[3])
+in_path = '%s' % str(sys.argv[4])
+out_path = '%s' % str(sys.argv[5])
 
-nsubvol = sim_list[sim]
 
-base_path = '/mnt/ceph/users/agabrielpillai/tng-sam/'
-lib_path = base_path + 'gflib/'
-var_path = 'variance/var.planck15.dat'
-
-def genParamFile(in_path, files_path):
-    content='\
+def gen_paramdotscsam(subvolume, filesdotlist):
+    content = '\
 #gf parameter file (gfn.v2)\n\
 #december 2017\n\
 #pathname of input and output\n\
-"%s/"\n\
+"%s/%s/"\n\
 #pathname of library files\n\
-"%s"\n\
+"%s/"\n\
 #verbosity\n\
 1\n\
 #seed\n\
@@ -83,7 +81,7 @@ def genParamFile(in_path, files_path):
 #f_baryon: negative number means use default value\n\
 0.1573\n\
 #variance file\n\
-"%s"\n\
+"variance/var.planck15.dat"\n\
 #save_history\n\
 1\n\
 #metallicity binning information\n\
@@ -94,7 +92,7 @@ def genParamFile(in_path, files_path):
 #zmin_outputsfhist zmax_outputsfhist mstarmin_outputsfhist [code units]\n\
 0.79000 1.80000 10.0\n\
 #minimum root mass (Msun)\n\
-4.54E7\n\
+8.85E8\n\
 #tree file format 0=bolshoi planck 1=illustrisTNG\n\
 1\n\
 #filename of file containing list of tree filenames\n\
@@ -111,7 +109,7 @@ def genParamFile(in_path, files_path):
 1 1 0 0 0\n\
 #GAL_SELECT 0=mstar 1=mhalo\n\
 1\n\
-1.0E5\n\
+8.85E8\n\
 #C_rad (major): sp-sp, sp-e, e-e\n\
 2.5 0 0\n\
 #C_rad (minor): sp-sp, sp-e, e-e\n\
@@ -122,26 +120,30 @@ def genParamFile(in_path, files_path):
 0.5 0.5 0.5\n\
 #usemainbranchonly (0/1)\n\
 0\n\
-'%(in_path, lib_path, var_path ,files_path)
+' % (out_path, subvolume, lib_path, filesdotlist)
 
-    with open(in_path + '/param.scsam', "w") as f:
+    with open('%s/%s/param.scsam' % (out_path, subvolume), "w") as f:
         f.write(content)
 
 
-def genFilesList(fileslist_path, in_path):
-    content='\
+def gen_filesdotlist(subvolume):
+    content = '\
 1\n\
-"%s"\n\
-'%(fileslist_path)
-    with open(in_path + '/files.list', "w") as f:
+"%s/isotree_%s.dat"\n\
+' % (in_path, subvolume)
+    with open('%s/%s/files.list' % (out_path, subvolume), "w") as f:
         f.write(content)
+    return '%s/%s/files.list' % (out_path, subvolume)
         
 
-for i in range(0, nsubvol):
-    for j in range(0, nsubvol):
-        for k in range(0, nsubvol):
-            in_path = base_path + sim + '/isotrees/' + str(i) + '_' + str(j) + '_' + str(k)
-            file_path = in_path + '/files.list'
-            genParamFile(in_path, file_path)
-            iso_path = in_path + '/isotree_' + str(i) + '_' + str(j) + '_' + str(k) + '.dat'
-            genFilesList(iso_path, in_path)	
+SIM_LIST = {'L35n2160TNG': {'n_subvol': 6, 'm_DM': 0},
+            'L75n1820TNG': {'n_subvol': 5, 'm_DM': 0},
+            'L205n2500TNG': {'n_subvol': 7, 'm_DM': 0}
+            }
+
+for j in range(0, SIM_LIST[SIM]['n_subvol']):
+    for k in range(0, SIM_LIST[SIM]['n_subvol']):
+        filesdotlist = gen_filesdotlist('%s_%i_%i' % (partition, j, k))
+        gen_paramdotscsam('%s_%i_%i' % (partition, j, k), filesdotlist)
+
+
