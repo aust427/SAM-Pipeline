@@ -10,15 +10,19 @@
 module load gcc
 module load lib/gsl
 
+CT_DIR=/mnt/ceph/users/agabrielpillai/TNG50/L35n2160TNG_DM/consistent-trees # path to consistent-trees files
+SCRIPT_DIR=/mnt/home/agabrielpillai/sc-sam # path to tree_to_isotree.pl script
+OUT_DIR=/mnt/ceph/users/agabrielpillai/ # path to output directory
+SUBVOLS=6 # how many subvolumes**3 files
+
 source /mnt/home/agabrielpillai/.bashrc
-for i in {0..5}
+for i in $(seq 0 $(($SUBVOLS - 1)))
 do
-	for j in {0..5}
-	do
-		for k in {0..5}
-		do
-			mkdir /mnt/ceph/users/agabrielpillai/tng-sam/L35n2160TNG/isotrees/"${i}_${j}_${k}" 
-			perl /mnt/home/agabrielpillai/sc-sam/tree_to_isotree.pl /mnt/ceph/users/agabrielpillai/TNG50/L35n2160TNG_DM/consistent-trees/"tree_${i}_${j}_${k}.dat" > /mnt/ceph/users/agabrielpillai/tng-sam/L35n2160TNG/isotrees/"${i}_${j}_${k}"/"isotree_${i}_${j}_${k}.dat"
+  for j in $(seq 0 $(($SUBVOLS - 1)))
+  do
+    for k in $(seq 0 $(($SUBVOLS - 1)))
+    do
+      perl $SCRIPT_DIR/tree_to_isotree.pl $CT_DIR/"tree_${i}_${j}_${k}.dat" > $OUT_DIR/"isotree_${i}_${j}_${k}.dat"
 		done
 	done
 done

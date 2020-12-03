@@ -9,11 +9,12 @@ x_k = int(sys.argv[3])
 
 n_sub = int(sys.argv[4])
 
-sim = sys.argv[5]
-input_path = sys.argv[6]
+input_path = sys.argv[5]
+output_path = sys.argv[6]
+
 snap_range = str(sys.argv[7])
 
-print('subvolume: %i_%i_%i' % (x_i, x_j, x_k))
+print('subvolume: {}_{}_{}'.format(x_i, x_j, x_k))
 
 g_colnames = ['halo_index', 'birthhaloid', 'roothaloid', 'redshift', 'sat_type',
               'mhalo', 'm_strip', 'rhalo', 'mstar', 'mbulge', 'mstar_merge', 'v_disk',
@@ -37,12 +38,12 @@ h_header_rows = []
 for i in range(0, len(h_colnames)):
     h_header_rows.append(i)
 
-galprop = pd.read_csv(input_path + '/' + sim + '/isotrees/%i_%i_%i/' % (x_i, x_j, x_k)
-                      + 'galprop_%s.dat' % snap_range, delimiter=' ', skiprows=g_header_rows, names=g_colnames)
+galprop = pd.read_csv('{}/{}_{}_{}/galprop_{}.dat'.format(input_path, x_i, x_j, x_k, snap_range),
+                      delimiter=' ', skiprows=g_header_rows, names=g_colnames)
 print('galprop read! shape:', galprop.shape)
 
-haloprop = pd.read_csv(input_path + '/' + sim + '/isotrees/%i_%i_%i/' % (x_i, x_j, x_k)
-                       + 'haloprop_%s.dat' % snap_range, delimiter=' ', skiprows=h_header_rows, names=h_colnames)
+haloprop = pd.read_csv('{}/{}_{}_{}/haloprop_{}.dat'.format(input_path, x_i, x_j, x_k, snap_range),
+                       delimiter=' ', skiprows=h_header_rows, names=h_colnames)
 print('haloprop read! shape:', haloprop.shape)
 
 redshifts = h5py.File(input_path + "/redshift.hdf5", "r")['Redshifts'][:]
@@ -54,7 +55,7 @@ for z in redshifts:
     galprop_n.append(galprop[galprop['redshift'] == z].shape[0])
     haloprop_n.append(haloprop[haloprop['redshift'] == z].shape[0])
 
-group = h5py.File(input_path + '/' + sim + '/outputs/subvolume_%i_%i_%i.hdf5' % (x_i, x_j, x_k), "w")
+group = h5py.File('{}/{}_{}_{}/subvolume.hdf5'.format(output_path, x_i, x_j, x_k))
 
 header = group.create_group("Header")
 
@@ -173,8 +174,8 @@ subhaloTsat = subhalos.create_dataset("GalpropTsat", (galprop.shape[0],),
 groups = group.create_group("Haloprop")
 
 # mass accretion quantities
-groupMaccdot_radio = groups.create_dataset("HalopropMaccdot_radio", (haloprop.shape[0],), dtype='<f4',
-                                           data=haloprop['maccdot_radio'].values)
+groupMaccdot_radio = groups.create_dataset("HalopropMaccdot_radio", (haloprop.shape[0],),
+                                           dtype='<f4', data=haloprop['maccdot_radio'].values)
 groupMcooldot = groups.create_dataset("HalopropMcooldot", (haloprop.shape[0],),
                                       dtype='<f4', data=haloprop['mcooldot'].values)
 groupMaccdot_metal = groups.create_dataset("HalopropMaccdot_metal", (haloprop.shape[0],),

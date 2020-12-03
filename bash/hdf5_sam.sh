@@ -12,22 +12,24 @@
 module load gcc
 module load python3
 
-BASE_PATH=/mnt/ceph/users/agabrielpillai/tng-sam
-SCRIPT_PATH=/mnt/ceph/users/agabrielpillai/tng-sam/scripts/postprocessing
-SIM=L205n2500TNG
-SUBVOLS=7
-SNAP_RANGE=0-98
+SIM=L75n1820TNG # what simulation
+SUBVOLS=2
+SNAP_RANGE=0-99 # snapnum range given via galprop + haloprop
+
+SCRIPT_PATH=/mnt/home/agabrielpillai/scripts/SAM-Pipeline/postprocessing # path to python scripts
+
+IN_PATH=/mnt/ceph/users/agabrielpillai/For_Rachel/IllustrisTNG/$SIM/sc-sam # path to folder containing raw ascii values
+OUT_PATH=/mnt/ceph/users/agabrielpillai/For_Shy/tng-sam/$SIM/output # path to output hdf5 files
 
 for i in $(seq 0 $(($SUBVOLS - 1)))
 do
-        for j in $(seq 0 $(($SUBVOLS - 1)))
-        do
-                for k in $(seq 0 $(($SUBVOLS - 1)))
-                do
-			python3 $SCRIPT_PATH/SAM-hdf5.py $i $j $k $SUBVOLS $SIM $BASE_PATH $SNAP_RANGE
+  for j in $(seq 0 $(($SUBVOLS - 1)))
+  do
+    for k in $(seq 0 $(($SUBVOLS - 1)))
+    do
+      rm -rf $OUT_PATH/"${i}_${j}_${k}" # remove subvolume directory and all contents
+      mkdir $OUT_PATH/"${i}_${j}_${k}"  # create subvolume directory
+      python3 $SCRIPT_PATH/SAM-hdf5.py $i $j $k $SUBVOLS $IN_PATH $OUT_PATH $SNAP_RANGE
 		done
 	done
 done
-
-python3 $SCRIPT_PATH/append-snap-idx.py $SUBVOLS $SIM $BASE_PATH
-python3 $SCRIPT_PATH/tree-offsets.py $SUBVOLS $SIM $BASE_PATH 
