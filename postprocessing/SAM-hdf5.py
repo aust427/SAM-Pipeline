@@ -46,6 +46,28 @@ haloprop = pd.read_csv('{}/{}_{}_{}/haloprop_{}.dat'.format(input_path, x_i, x_j
                        delimiter=' ', skiprows=h_header_rows, names=h_colnames)
 print('haloprop read! shape:', haloprop.shape)
 
+
+def filter_prop(gal, hal):
+    # first filter haloprop by getting all the halos that produced subhalos (from galprop)
+    h1 = hal.iloc[(np.unique(hal.iloc[gal['halo_index'] - 1]['halo_index']))]
+
+    # get all the centrals at redshift 99
+    g1 = gal[gal['redshift'] == 0]
+    g1 = g1[g1['sat_type'] == 0]
+    # now get all the roothaloids that produced trees at snapshot 99
+    h2 = h1[h1['roothaloid'].isin(h1.loc[g1['halo_index'] - 1]['roothaloid'])]
+    # now find all the values of halo_index in galprop that are in haloprop
+    g2 = gal[(gal['halo_index'] - 1).isin(h2['halo_index'])]
+
+    # fix indexing
+    h2.loc[:, 'halo_index'] = np.arange(h2.shape[0])
+    g2.loc[:, 'halo_index'] = h2.loc[g2['halo_index'] - 1]['halo_index'].values
+
+    return g2, h2.reset_index(drop=True)
+
+
+galprop, haloprop = filter_prop(galprop, haloprop)
+
 redshifts = h5py.File(input_path + "/redshift.hdf5", "r")['Redshifts'][:]
 
 galprop_n = []
@@ -55,7 +77,7 @@ for z in redshifts:
     galprop_n.append(galprop[galprop['redshift'] == z].shape[0])
     haloprop_n.append(haloprop[haloprop['redshift'] == z].shape[0])
 
-group = h5py.File('{}/{}_{}_{}/subvolume.hdf5'.format(output_path, x_i, x_j, x_k))
+group = h5py.File('{}/output/{}_{}_{}/subvolume.hdf5'.format(output_path, x_i, x_j, x_k))
 
 header = group.create_group("Header")
 

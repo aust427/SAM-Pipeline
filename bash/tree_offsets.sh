@@ -12,8 +12,9 @@
 module load gcc
 module load python3
 
-SIM=L205n2500TNG
-NSUB=7
-BASE_PATH=/mnt/ceph/users/agabrielpillai/tng-sam
+SIM=L75n1820TNG
+NSUB=1
+SCRIPT_PATH=/mnt/home/agabrielpillai/scripts/SAM-Pipeline/postprocessing # path to python scripts
+BASE_PATH=/mnt/ceph/users/agabrielpillai/For_Shy/tng-sam/$SIM
 
-python3 $BASE_PATH/scripts/postprocessing/tree-offsets.py $NSUB $SIM $BASE_PATH
+python3 $SCRIPT_PATH/tree-offsets.py $NSUB $BASE_PATH
