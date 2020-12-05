@@ -6,8 +6,13 @@ lib_path = '%s' % str(sys.argv[3])
 in_path = '%s' % str(sys.argv[4])
 out_path = '%s' % str(sys.argv[5])
 
+SIM_LIST = {'L35n2160TNG': {'n_subvol': 6, '100m_DM': 0},
+            'L75n1820TNG': {'n_subvol': 5, '100m_DM': '8.85E8'},
+            'L205n2500TNG': {'n_subvol': 7, '100m_DM': '6.98E9'}
+            }
 
-def gen_paramdotscsam(subvolume, filesdotlist):
+
+def gen_paramdotscsam(subvolume, filesdotlist, mDM):
     content = '\
 #gf parameter file (gfn.v2)\n\
 #december 2017\n\
@@ -92,7 +97,7 @@ def gen_paramdotscsam(subvolume, filesdotlist):
 #zmin_outputsfhist zmax_outputsfhist mstarmin_outputsfhist [code units]\n\
 0.79000 1.80000 10.0\n\
 #minimum root mass (Msun)\n\
-8.85E8\n\
+%s\n\
 #tree file format 0=bolshoi planck 1=illustrisTNG\n\
 1\n\
 #filename of file containing list of tree filenames\n\
@@ -109,7 +114,7 @@ def gen_paramdotscsam(subvolume, filesdotlist):
 1 1 0 0 0\n\
 #GAL_SELECT 0=mstar 1=mhalo\n\
 1\n\
-8.85E8\n\
+%s\n\
 #C_rad (major): sp-sp, sp-e, e-e\n\
 2.5 0 0\n\
 #C_rad (minor): sp-sp, sp-e, e-e\n\
@@ -120,7 +125,7 @@ def gen_paramdotscsam(subvolume, filesdotlist):
 0.5 0.5 0.5\n\
 #usemainbranchonly (0/1)\n\
 0\n\
-' % (out_path, subvolume, lib_path, filesdotlist)
+' % (out_path, subvolume, lib_path, mDM, filesdotlist, mDM)
 
     with open('%s/%s/param.scsam' % (out_path, subvolume), "w") as f:
         f.write(content)
@@ -134,16 +139,11 @@ def gen_filesdotlist(subvolume):
     with open('%s/%s/files.list' % (out_path, subvolume), "w") as f:
         f.write(content)
     return '%s/%s/files.list' % (out_path, subvolume)
-        
 
-SIM_LIST = {'L35n2160TNG': {'n_subvol': 6, 'm_DM': 0},
-            'L75n1820TNG': {'n_subvol': 5, 'm_DM': 0},
-            'L205n2500TNG': {'n_subvol': 7, 'm_DM': 0}
-            }
 
 for j in range(0, SIM_LIST[SIM]['n_subvol']):
     for k in range(0, SIM_LIST[SIM]['n_subvol']):
         filesdotlist = gen_filesdotlist('%s_%i_%i' % (partition, j, k))
-        gen_paramdotscsam('%s_%i_%i' % (partition, j, k), filesdotlist)
+        gen_paramdotscsam('%s_%i_%i' % (partition, j, k), filesdotlist, SIM_LIST[SIM]['100m_DM'])
 
 

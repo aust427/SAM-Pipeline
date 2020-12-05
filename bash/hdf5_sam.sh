@@ -14,14 +14,18 @@ module load python3
 
 SIM=L75n1820TNG # what simulation
 NSUBVOL=5 # NSUBVOL**3 = how many total subvolumes in this simulation
-SNAP_RANGE=0-99 # snapnum range given via galprop + haloprop
+SNAP_RANGE=0-99 # snapnum range given via galprop + haloprop in the format of , for ex. '0-99' or '99-99'
 
 SCRIPT_PATH=/mnt/home/agabrielpillai/scripts/SAM-Pipeline/postprocessing # path to python scripts
 
 IN_PATH=/mnt/ceph/users/agabrielpillai/For_Rachel/IllustrisTNG/$SIM/sc-sam # path to folder containing raw ascii values
 OUT_PATH=/mnt/ceph/users/agabrielpillai/For_Shy/tng-sam/$SIM # path to directory to output hdf5 files
 
+# later change this to an if else statement where if directory exists, remove contents, else create
+mkdir $OUT_PATH/output
+
 rm -rf $OUT_PATH/output/* # remove subvolume directories and all contents
+
 
 for i in $(seq 0 $(($NSUBVOL - 1)))
 do
