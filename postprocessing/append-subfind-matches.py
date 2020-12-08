@@ -41,11 +41,13 @@ for subvolume in subvolumes:
     haloprop_SAM['subfind-idx-FP'] = -1
     
     for i in range(0, 100):
-        haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'subfind-idx-DM'] = matches_DM[str(i)][int(offset[i]):int(offset[i]+head['Ngroups_ThisFile_Redshift'][i])][:]
-        haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'subfind-idx-FP'] = matches_FP[str(i)][int(offset[i]):int(offset[i]+head['Ngroups_ThisFile_Redshift'][i])][:]
+        haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'subfind-idx-DM'] = \
+            matches_DM[str(i)][int(offset[i]):int(offset[i]+head['Ngroups_ThisFile_Redshift'][i])][:]
+        haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'subfind-idx-FP'] = \
+            matches_FP[str(i)][int(offset[i]):int(offset[i]+head['Ngroups_ThisFile_Redshift'][i])][:]
     print('matches appended')
     
-    f = h5py.File(basePathSAM  + '/outputs/subvolume_%i_%i_%i.hdf5' % (subvolume[0], subvolume[1], subvolume[2]), 'r+')
+    f = h5py.File(basePathSAM + '/output/{}_{}_{}/matches.hdf5'.format(*subvolume), 'r+')
     
     if 'HalopropSubfindID' in f['Haloprop'].keys():
         del f['Haloprop']['HalopropSubfindID']   
@@ -56,10 +58,10 @@ for subvolume in subvolumes:
     if 'HalopropSubfindID_DM' in f['Haloprop'].keys():
         del f['Haloprop']['HalopropSubfindID_DM']
     
-    subfind_FP = f['Haloprop'].create_dataset('HalopropSubfindID_FP', (haloprop_SAM.shape[0], ), 
-                                           dtype='int32', data = haloprop_SAM['subfind-idx-FP'].values.astype(float))    
-    subfind_DM = f['Haloprop'].create_dataset('HalopropSubfindID_DM', (haloprop_SAM.shape[0], ), 
-                                           dtype='int32', data = haloprop_SAM['subfind-idx-DM'].values.astype(float))
+    subfind_FP = f['Haloprop'].create_dataset('HalopropSubfindID_FP', (haloprop_SAM.shape[0], ), dtype='int32',
+                                              data=haloprop_SAM['subfind-idx-FP'].values.astype(float))
+    subfind_DM = f['Haloprop'].create_dataset('HalopropSubfindID_DM', (haloprop_SAM.shape[0], ), dtype='int32',
+                                              data=haloprop_SAM['subfind-idx-DM'].values.astype(float))
         
     f.close()
     print('matches written')

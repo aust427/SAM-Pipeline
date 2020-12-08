@@ -10,13 +10,13 @@ Pipeline scripts for running and post-processing the Santa-Cruz Semi-analytic mo
 ##Process Pipeline
 ###1. Creating isotrees
 ```
-bash/isotree_sub.sh
+bash/create_isotrees.sh
 ```
 
 ...
 ###2. Running the SAM
 ```
-bash/sam_submission.sh
+bash/submit_sam.sh
 --
 running/gen_files.py
 running/run_SAM_multi.py
@@ -26,8 +26,8 @@ To clarify terms and definitions in the job submission file:
 **Subvols**: The cube root of the total number of subvolumes. There are 125 subvolumes in TNG100, 125 = 5^3. 
 
 **Partition**: What set of subvolumes of the volume you are running the SAM on. 
-Taking TNG100 as example, there are 125 subvolumes labeled betweeen [0, 0, 0], [0, 0, 1], ..., [0, 0, 4], [0, 1, 0], 
-..., [4, 4, 4]. Partition 0 would then mean taking all subvolumes between [0, 0, 0] and [0, 4, 4], Partition 1 would
+Taking TNG100 as example, there are 125 subvolumes labeled [0, 0, 0], [0, 0, 1], ..., [0, 0, 4], [0, 1, 0], 
+..., [4, 4, 4]. Partition 0 would mean taking all subvolumes between [0, 0, 0] and [0, 4, 4], partition 1 would
 be all subvolumes between [1, 0, 0] and [1, 4, 4], and so on. 
 
 If you plan on re-running the SAM for any reason (parameter variation, updated equations, etc.), then it is 
@@ -47,7 +47,7 @@ in order to run multiple partitions through a single job request.
 ```
 bash/hdf5_sam.sh
 --
-postprocessing/SAM-hdf5.py
+postprocessing/get-redshifts.py
 postprocessing/tree-offsets.py
 ```
 When modifying hdf5_sam.sh, you will need to change the following variables: 
