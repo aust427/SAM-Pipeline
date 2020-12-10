@@ -74,8 +74,36 @@ OUT_PATH/output/
 	tree lookup file: OUT_PATH/output/lookup/tree_lookup.hdf5
 ```
 
-###4. Output Verification
+###4. Output and Verification
+The outputs are compatible with the illustris_sam 
 
-###5. Optional Fields and Files
+An example Jupyter Notebook is included if you would like to verify and visualize your output. The notebook creates a 
+series of scaling relationships for the catalog at z = 0, plotting things like the halo mass function, stellar mass-halo
+mass relationship, and more. Observational data used to calibrate the SAM can be overplotted as an important verification
+step. The data is not included with this release.  
+
+For a standard list of field definitions, type, and units, see the following Google doc: 
+
+###5. Optional Files and Fields
+```
+bash/supplemental_fields.sh
+```
+With the base postprocessing run completed and verified, you now have all the tools at hand for 
+additional field creation. An example submission script for existing scripts can be seen in the 
+```bash`` folder. To detail some of these scripts: 
+
+
+```
+postprocessing/append-snap-idx.py
+```
+
+The script is used for adding pre-computed indices between galprop and haloprop when loading
+takes a BASE_PATH and NSUBVOL as an input. 
+
+```
+postprocessing/create-master-match.py
+postprocessing/matches-hdf5.py
+```
+
 
 
