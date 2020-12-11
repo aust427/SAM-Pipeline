@@ -14,6 +14,10 @@ output_path = sys.argv[6]
 
 snap_range = str(sys.argv[7])
 
+snapshot_offset = int(sys.argv[8])
+
+redshift_path = str(sys.argv[9])
+
 print('subvolume: {}_{}_{}'.format(x_i, x_j, x_k))
 
 g_colnames = ['halo_index', 'birthhaloid', 'roothaloid', 'redshift', 'sat_type',
@@ -46,6 +50,9 @@ haloprop = pd.read_csv('{}/{}_{}_{}/haloprop_{}.dat'.format(input_path, x_i, x_j
                        delimiter=' ', skiprows=h_header_rows, names=h_colnames)
 print('haloprop read! shape:', haloprop.shape)
 
+# fix snapshot
+haloprop['snap_num'] += snapshot_offset
+
 
 def filter_prop(gal, hal):
     # first filter haloprop by getting all the halos that produced subhalos (from galprop)
@@ -68,7 +75,7 @@ def filter_prop(gal, hal):
 
 galprop, haloprop = filter_prop(galprop, haloprop)
 
-redshifts = h5py.File(input_path + "/redshift.hdf5", "r")['Redshifts'][:]
+redshifts = h5py.File("{}/redshift.hdf5".format(redshift_path), "r")['Redshifts'][:]
 
 galprop_n = []
 haloprop_n = []

@@ -52,7 +52,7 @@ for subvolume in subvolumes:
 
         haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'subfind-idx-FP'] = \
             matches_FP['Subfind'][str(i)][int(offset[i]):int(offset[i]+head['Ngroups_ThisFile_Redshift'][i])][:]
-        haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'fof-idx-DM'] = \
+        haloprop_SAM.loc[haloprop_SAM['snap_num'] == i, 'fof-idx-FP'] = \
             matches_FP['FoF'][str(i)][int(offset[i]):int(offset[i]+head['Ngroups_ThisFile_Redshift'][i])][:]
     print('matches appended')
 
@@ -78,9 +78,9 @@ for subvolume in subvolumes:
                                           data=galprop_SAM['subfind-idx-DM'])
 
     halos = f.create_group("Haloprop")
-    halos_FP = subhalos.create_dataset('HalopropFoFIndex_FP', (haloprop_SAM.shape[0], ), dtype='int32',
+    halos_FP = halos.create_dataset('HalopropFoFIndex_FP', (haloprop_SAM.shape[0], ), dtype='int32',
                                        data=haloprop_SAM['fof-idx-FP'])
-    halos_DM = subhalos.create_dataset('HalopropFoFIndex_DM', (haloprop_SAM.shape[0], ), dtype='int32',
+    halos_DM = halos.create_dataset('HalopropFoFIndex_DM', (haloprop_SAM.shape[0], ), dtype='int32',
                                           data=haloprop_SAM['fof-idx-DM'])
 
     f.close()

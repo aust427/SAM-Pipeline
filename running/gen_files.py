@@ -1,15 +1,17 @@
 import sys
 
 SIM = str(sys.argv[1])
-partition = int(sys.argv[2])
-lib_path = '%s' % str(sys.argv[3])
-in_path = '%s' % str(sys.argv[4])
-out_path = '%s' % str(sys.argv[5])
+nsubvol = int(sys.argv[2])
+m_th = str(sys.argv[3])
+partition = int(sys.argv[4])
+lib_path = '%s' % str(sys.argv[5])
+in_path = '%s' % str(sys.argv[6])
+out_path = '%s' % str(sys.argv[7])
 
-SIM_LIST = {'L35n2160TNG': {'n_subvol': 6, '100m_DM': 0},
-            'L75n1820TNG': {'n_subvol': 5, '100m_DM': '8.85E8'},
-            'L205n2500TNG': {'n_subvol': 7, '100m_DM': '6.98E9'}
-            }
+# SIM_LIST = {'L35n2160TNG': {'n_subvol': 6, '100m_DM': 0},
+#             'L75n1820TNG': {'n_subvol': 5, '100m_DM': '8.85E8'},
+#             'L205n2500TNG': {'n_subvol': 7, '100m_DM': '6.98E9'}
+#             }
 
 
 def gen_paramdotscsam(subvolume, filesdotlist, mDM):
@@ -141,9 +143,9 @@ def gen_filesdotlist(subvolume):
     return '%s/%s/files.list' % (out_path, subvolume)
 
 
-for j in range(0, SIM_LIST[SIM]['n_subvol']):
-    for k in range(0, SIM_LIST[SIM]['n_subvol']):
+for j in range(0, nsubvol):
+    for k in range(0, nsubvol):
         filesdotlist = gen_filesdotlist('%s_%i_%i' % (partition, j, k))
-        gen_paramdotscsam('%s_%i_%i' % (partition, j, k), filesdotlist, SIM_LIST[SIM]['100m_DM'])
+        gen_paramdotscsam('%s_%i_%i' % (partition, j, k), filesdotlist, m_th)
 
 
