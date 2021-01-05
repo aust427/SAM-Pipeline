@@ -56,21 +56,21 @@ haloprop['snap_num'] += snapshot_offset
 
 def filter_prop(gal, hal):
     # first filter haloprop by getting all the halos that produced subhalos (from galprop)
-    h1 = hal.iloc[(np.unique(hal.iloc[gal['halo_index'] - 1]['halo_index']))]
+    h1 = hal.iloc[(np.unique(hal.iloc[gal['halo_index']]['halo_index']))]
 
     # get all the centrals at redshift 99
     g1 = gal[gal['redshift'] == 0]
     g1 = g1[g1['sat_type'] == 0]
     # now get all the roothaloids that produced trees at snapshot 99
-    h2 = h1[h1['roothaloid'].isin(h1.loc[g1['halo_index'] - 1]['roothaloid'])]
+    h2 = h1[h1['roothaloid'].isin(h1.loc[g1['halo_index']]['roothaloid'])]
     # now find all the values of halo_index in galprop that are in haloprop
-    g2 = gal[(gal['halo_index'] - 1).isin(h2['halo_index'])]
+    g2 = gal[(gal['halo_index']).isin(h2['halo_index'])]
 
     # fix indexing
     h2.loc[:, 'halo_index'] = np.arange(h2.shape[0])
-    g2.loc[:, 'halo_index'] = h2.loc[g2['halo_index'] - 1]['halo_index'].values
+    g2.loc[:, 'halo_index'] = h2.loc[g2['halo_index']]['halo_index'].values.astype(int)
 
-    return g2, h2.reset_index(drop=True)
+    return g2.reset_index(drop=True), h2.reset_index(drop=True)
 
 
 galprop, haloprop = filter_prop(galprop, haloprop)
